@@ -1,6 +1,3 @@
-
-
-
 import React, { useEffect } from 'react';
 import { AppProvider } from './contexts/AppContext';
 import { AppContent } from './components/app/AppContent';

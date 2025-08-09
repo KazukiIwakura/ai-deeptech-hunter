@@ -1,6 +1,6 @@
 import React from 'react';
 import { DeepDivePage, ChatPage, HomePage, ResultsPage } from '@/pages';
-import { ChatHistorySidebar, Header } from '@/layout';
+import { ChatHistorySidebar, Header } from '@/components';
 import { HowItWorksModal } from '@/components/ui/HowItWorksModal';
 import { OGPDebugger } from '@/components/common/OGPDebugger';
 import { useApp } from '@/contexts/AppContext';
