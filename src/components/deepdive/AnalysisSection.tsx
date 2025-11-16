@@ -86,7 +86,15 @@ export const AnalysisSection: React.FC<AnalysisSectionProps> = ({ data, titleOve
             </h2>
             <div className="pl-10 pt-8">
                 {config.map(item => {
-                    const content = (data as any)[item.key];
+                    // 型安全にプロパティにアクセス
+                    let content: string | undefined;
+                    if ('problemAndMarketSize' in data || 'monopolyPotential' in data || 'profitModel' in data) {
+                        content = (data as PotentialImpactData)[item.key as keyof PotentialImpactData] as string | undefined;
+                    } else if ('customerPain' in data || 'competition' in data || 'businessBarriers' in data) {
+                        content = (data as MarketRiskData)[item.key as keyof MarketRiskData] as string | undefined;
+                    } else if ('technicalChallenge' in data || 'trlAndTrackRecord' in data || 'ipPortfolio' in data) {
+                        content = (data as TechRiskData)[item.key as keyof TechRiskData] as string | undefined;
+                    }
                     return content ? <SubSection key={item.key} title={item.title} content={content} /> : null;
                 })}
             </div>

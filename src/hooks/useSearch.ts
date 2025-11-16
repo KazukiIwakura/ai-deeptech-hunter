@@ -8,6 +8,7 @@ import {
 import type { DeepTech, Source, OverseasStartup, TechExplanationData } from '@/types';
 import type { GoogleGenAI } from '@google/genai';
 import { useApiUsageMonitor } from '@/hooks/useApiUsageMonitor';
+import { useErrorHandler } from '@/hooks/useErrorHandler';
 
 // 1. State and Action Types
 interface SearchState {
@@ -120,6 +121,7 @@ const searchReducer = (state: SearchState, action: SearchAction): SearchState =>
 export const useSearch = (ai: GoogleGenAI | null, useDemoData: boolean) => {
     const [state, dispatch] = useReducer(searchReducer, initialState);
     const { trackApiCall } = useApiUsageMonitor();
+    const { handleError } = useErrorHandler({ context: 'useSearch' });
 
     const reset = useCallback(() => dispatch({ type: 'RESET' }), []);
 
@@ -147,13 +149,22 @@ export const useSearch = (ai: GoogleGenAI | null, useDemoData: boolean) => {
         await Promise.allSettled([
             getTechExplanation(ai, query, useDemoData)
                 .then(data => dispatch({ type: 'SET_EXPLANATION_RESULT', payload: { data } }))
-                .catch(err => dispatch({ type: 'SET_EXPLANATION_RESULT', payload: { data: null, error: err.message } })),
+                .catch(err => {
+                    const appError = handleError(err, '技術説明の取得に失敗しました');
+                    dispatch({ type: 'SET_EXPLANATION_RESULT', payload: { data: null, error: appError.message } });
+                }),
             getOverseasStartups(ai, query, [], useDemoData)
                 .then(data => dispatch({ type: 'SET_OVERSEAS_RESULT', payload: { ...data } }))
-                .catch(err => dispatch({ type: 'SET_OVERSEAS_RESULT', payload: { startups: [], sources: [], error: err.message } })),
+                .catch(err => {
+                    const appError = handleError(err, '海外スタートアップ情報の取得に失敗しました');
+                    dispatch({ type: 'SET_OVERSEAS_RESULT', payload: { startups: [], sources: [], error: appError.message } });
+                }),
             huntDeepTech(ai, query, [], useDemoData)
                 .then(data => dispatch({ type: 'SET_DOMESTIC_RESULT', payload: { ...data } }))
-                .catch(err => dispatch({ type: 'SET_DOMESTIC_RESULT', payload: { results: [], sources: [], error: err.message } })),
+                .catch(err => {
+                    const appError = handleError(err, '国内技術検索に失敗しました');
+                    dispatch({ type: 'SET_DOMESTIC_RESULT', payload: { results: [], sources: [], error: appError.message } });
+                }),
         ]);
         
         dispatch({ type: 'SEARCH_DONE' });

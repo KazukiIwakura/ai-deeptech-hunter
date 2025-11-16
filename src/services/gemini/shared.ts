@@ -2,6 +2,7 @@ import { GenerateContentResponse } from "@google/genai";
 import { z, ZodError } from 'zod';
 import type { Source } from '@/types';
 import { sourceReliabilityAnalyzer } from '../quality/sourceReliability';
+import { createAppError, logError, ErrorType } from '@/utils/errorHandler';
 
 /**
  * A utility to retry an async function if it fails.
@@ -17,15 +18,26 @@ export const withRetry = async <T>(apiCall: () => Promise<T>, retries = 3, initi
         try {
             return await apiCall();
         } catch (error) {
-            lastError = error as Error;
+            lastError = error instanceof Error ? error : new Error(String(error));
             if (i < retries - 1) {
                 const delay = initialDelay * Math.pow(2, i);
-                console.warn(`API call failed. Retrying in ${delay}ms... (Attempt ${i + 2}/${retries})`);
+                const appError = createAppError(error);
+                logError(appError, `withRetry (Attempt ${i + 1}/${retries})`);
+                
+                if (process.env.NODE_ENV === 'development') {
+                    console.warn(`API call failed. Retrying in ${delay}ms... (Attempt ${i + 2}/${retries})`);
+                }
                 await new Promise(resolve => setTimeout(resolve, delay));
             }
         }
     }
-    console.error("API call failed after all retries.", lastError);
+    
+    // 最終的なエラーをログに記録
+    if (lastError) {
+        const appError = createAppError(lastError);
+        logError(appError, 'withRetry (All retries exhausted)');
+    }
+    
     throw lastError;
 };
 
@@ -54,11 +66,25 @@ export const parseJsonFromResponse = <T>(text: string | undefined, schema: z.Sch
         const parsedJson = JSON.parse(jsonStr);
         return schema.parse(parsedJson);
     } catch (e) {
+        const appError = createAppError(e);
+        
         if (e instanceof ZodError) {
-            console.error("Zod validation failed:", e.issues, "Raw text:", text, "Attempted to parse:", jsonStr);
+            logError(
+                { ...appError, type: ErrorType.VALIDATION_ERROR },
+                'parseJsonFromResponse (Zod validation)'
+            );
+            if (process.env.NODE_ENV === 'development') {
+                console.error("Zod validation failed:", e.issues, "Raw text:", text, "Attempted to parse:", jsonStr);
+            }
             throw new Error(`AIからの応答が期待されるデータ形式と一致しませんでした。`);
         } else {
-            console.error("Failed to parse JSON:", e, "Raw text:", text, "Attempted to parse:", jsonStr);
+            logError(
+                { ...appError, type: ErrorType.PARSE_ERROR },
+                'parseJsonFromResponse (JSON parse)'
+            );
+            if (process.env.NODE_ENV === 'development') {
+                console.error("Failed to parse JSON:", e, "Raw text:", text, "Attempted to parse:", jsonStr);
+            }
             throw new Error(`AIからの応答をJSONとして解析できませんでした。`);
         }
     }

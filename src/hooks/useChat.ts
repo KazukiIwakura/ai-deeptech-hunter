@@ -4,6 +4,8 @@ import { createDeepDiveChat, getChatSuggestions, withRetry } from '@/services/ge
 import type { DeepTech, ChatSession, ChatMessage, Source } from '@/types';
 import type { GoogleGenAI, GenerateContentResponse } from '@google/genai';
 import { useApiUsageMonitor } from '@/hooks/useApiUsageMonitor';
+import { useErrorHandler } from '@/hooks/useErrorHandler';
+import { getErrorMessage } from '@/utils/errorHandler';
 
 // 1. State and Action Types
 interface ChatState {
@@ -105,6 +107,7 @@ const chatReducer = (state: ChatState, action: ChatAction): ChatState => {
 export const useChat = (ai: GoogleGenAI | null, useDemoData: boolean, deepDiveAnalysis: string) => {
     const [state, dispatch] = useReducer(chatReducer, initialState);
     const { trackApiCall } = useApiUsageMonitor();
+    const { handleError } = useErrorHandler({ context: 'useChat' });
 
     const activeSession = useMemo(() => state.sessions.find(s => s.id === state.activeId), [state.sessions, state.activeId]);
 
@@ -142,7 +145,7 @@ export const useChat = (ai: GoogleGenAI | null, useDemoData: boolean, deepDiveAn
                 const suggestions = await getChatSuggestions(ai, newSession.tech.techName, newSession.tech.university, newSession.initialAnalysis, useDemoData);
                 dispatch({ type: 'SET_SUGGESTIONS', payload: { sessionId: newSession.id, suggestions, isLoading: false } });
             } catch (err) {
-                console.error("Failed to fetch chat suggestions:", err);
+                handleError(err, 'チャット提案の取得に失敗しました');
                 dispatch({ type: 'SET_SUGGESTIONS', payload: { sessionId: newSession.id, suggestions: [], isLoading: false } });
             }
         })();
@@ -179,8 +182,8 @@ export const useChat = (ai: GoogleGenAI | null, useDemoData: boolean, deepDiveAn
                 });
             }
         } catch (err) {
-            const errorMessage = err instanceof Error ? err.message : '予期せぬエラー';
-            dispatch({ type: 'SEND_MESSAGE_ERROR', payload: { sessionId, error: `AI応答エラー: ${errorMessage}`, modelPlaceholderId: modelPlaceholder.id } });
+            const appError = handleError(err, 'メッセージ送信に失敗しました');
+            dispatch({ type: 'SEND_MESSAGE_ERROR', payload: { sessionId, error: appError.message, modelPlaceholderId: modelPlaceholder.id } });
         } finally {
             dispatch({ type: 'SEND_MESSAGE_END' });
         }

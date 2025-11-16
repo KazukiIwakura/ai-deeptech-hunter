@@ -4,3 +4,5 @@
  */
 
 export * from './encryption';
+export * from './errorHandler';
+export * from './logger';

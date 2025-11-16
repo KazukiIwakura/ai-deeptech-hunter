@@ -2,11 +2,13 @@
  * Simple in-memory cache implementation for quality assessment
  */
 
+import type { QualityAssessment } from '@/types';
+
 // Cache for domain reliability scores
 export const domainReliabilityCache = new Map<string, number>();
 
 // Cache for content analysis results
-export const contentAnalysisCache = new Map<string, any>();
+export const contentAnalysisCache = new Map<string, QualityAssessment>();
 
 // Cache management functions
 export const clearCaches = () => {

@@ -12,10 +12,19 @@ interface StreamingAnalysisDisplayProps {
     isComplete: boolean;
 }
 
+type SectionData = 
+  | DeepDiveAnalysisData['scorecard']
+  | DeepDiveAnalysisData['summary']
+  | DeepDiveAnalysisData['potentialImpact']
+  | DeepDiveAnalysisData['marketRisk']
+  | DeepDiveAnalysisData['techRisk']
+  | DeepDiveAnalysisData['keyFlags']
+  | DeepDiveAnalysisData['killerQuestions'];
+
 interface ParsedSection {
     key: string;
     title: string;
-    data: any;
+    data: SectionData;
     isComplete: boolean;
 }
 

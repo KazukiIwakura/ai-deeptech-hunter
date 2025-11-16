@@ -159,7 +159,7 @@ export const ResultsPage: React.FC = () => {
     sortKey: string;
     label: string;
     config: { key: string; direction: SortDirection };
-    onSort: (key: any) => void;
+    onSort: (key: DomesticSortKey | OverseasSortKey) => void;
   }> = ({ sortKey, label, config, onSort }) => {
     const isActive = config.key === sortKey;
     const direction = isActive ? config.direction : 'asc';

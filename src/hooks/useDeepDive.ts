@@ -8,6 +8,7 @@ import { parseJsonFromResponse } from '@/services/gemini/shared';
 import type { GoogleGenAI } from '@google/genai';
 import { deepDiveAnalysisSchema } from '@/services/zodSchemas';
 import { useApiUsageMonitor } from '@/hooks/useApiUsageMonitor';
+import { useErrorHandler } from '@/hooks/useErrorHandler';
 
 // 1. State and Action Types
 interface DeepDiveState {
@@ -110,6 +111,7 @@ const deepDiveReducer = (state: DeepDiveState, action: DeepDiveAction): DeepDive
 export const useDeepDive = (ai: GoogleGenAI | null, useDemoData: boolean) => {
     const [state, dispatch] = useReducer(deepDiveReducer, initialState);
     const { trackApiCall } = useApiUsageMonitor();
+    const { handleError } = useErrorHandler({ context: 'useDeepDive' });
 
     const reset = useCallback(() => dispatch({ type: 'RESET' }), []);
 
@@ -154,8 +156,8 @@ export const useDeepDive = (ai: GoogleGenAI | null, useDemoData: boolean) => {
                 }
             }
         } catch (err) {
-            const message = err instanceof Error ? err.message : '予期せぬエラー';
-            dispatch({ type: 'SET_ERROR', payload: message });
+            const appError = handleError(err, '詳細分析の取得に失敗しました');
+            dispatch({ type: 'SET_ERROR', payload: appError.message });
             return;
         } 
         
