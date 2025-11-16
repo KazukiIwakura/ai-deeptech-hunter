@@ -5,9 +5,9 @@
  * 使用方法: npm run test:performance
  */
 
-import { qualityBenchmark } from '../services/quality/benchmark';
-import { performanceMonitor } from '../services/quality/performance';
-import { optimizedResponseValidator } from '../services/quality/optimizedValidator';
+import { qualityBenchmark } from '../src/services/quality/benchmark';
+import { performanceMonitor } from '../src/services/quality/performance';
+import { optimizedResponseValidator } from '../src/services/quality/optimizedValidator';
 
 async function main() {
   console.log('🚀 品質評価システム パフォーマンステスト開始\n');

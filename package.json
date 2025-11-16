@@ -1,5 +1,5 @@
 {
-  "name": "ディープテックハンター10-(7/15)",
+  "name": "ai-deeptech-hunter",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -8,7 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "test:performance": "tsx scripts/test-performance.ts",
-    "benchmark:quality": "tsx services/quality/benchmark-runner.ts"
+    "benchmark:quality": "tsx src/services/quality/benchmark-runner.ts"
   },
   "dependencies": {
     "@google/genai": "^1.8.0",
