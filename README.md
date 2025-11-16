@@ -1,6 +1,6 @@
-# Deep Tech Hunter 🔬
+# AI DeepTech Hunter 🔬
 
-日本の大学・研究機関の最先端ディープテクノロジーを発見・分析するAI搭載リサーチプラットフォーム
+日本の大学・研究機関の最先端ディープテクノロジーを発見・分析するAIエージェント
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
