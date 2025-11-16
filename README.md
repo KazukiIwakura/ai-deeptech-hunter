@@ -83,19 +83,28 @@
 ## 📁 プロジェクト構成
 
 ```
-├── components/          # 再利用可能なUIコンポーネント
-│   ├── chat/           # チャットインターフェース
-│   ├── common/         # 共通コンポーネント（Button、Cardなど）
-│   ├── deepdive/       # 詳細分析コンポーネント
-│   ├── search/         # 検索・結果表示コンポーネント
-│   └── ui/             # UI専用コンポーネント
-├── pages/              # トップレベルページコンポーネント
-├── contexts/           # React Contextプロバイダー
-├── hooks/              # カスタムReactフック
-├── services/           # 外部API統合
-│   └── gemini/         # Gemini AIサービスモジュール
-├── types/              # TypeScript型定義
-└── utils/              # ユーティリティ関数
+├── src/                    # ソースコードのルートディレクトリ
+│   ├── components/         # 再利用可能なUIコンポーネント
+│   │   ├── app/           # アプリケーションコアコンポーネント
+│   │   ├── chat/          # チャットインターフェース
+│   │   ├── common/        # 共通コンポーネント（Button、Cardなど）
+│   │   ├── deepdive/      # 詳細分析コンポーネント
+│   │   ├── icons/         # アイコンコンポーネント
+│   │   ├── search/        # 検索・結果表示コンポーネント
+│   │   └── ui/            # UI専用コンポーネント
+│   ├── pages/             # トップレベルページコンポーネント
+│   ├── contexts/          # React Contextプロバイダー
+│   ├── hooks/             # カスタムReactフック
+│   ├── services/          # 外部API統合
+│   │   ├── gemini/        # Gemini AIサービスモジュール
+│   │   └── quality/       # 品質管理・ベンチマーク
+│   ├── types/             # TypeScript型定義
+│   ├── utils/             # ユーティリティ関数
+│   ├── config/            # アプリケーション設定
+│   └── scripts/           # ビルド・テストスクリプト
+├── public/                # 静的アセット
+├── docs/                  # ドキュメント
+└── dist/                  # ビルド出力（自動生成）
 ```
 
 ## 🔧 利用可能なスクリプト

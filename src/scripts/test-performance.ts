@@ -70,8 +70,8 @@ async function main() {
   }
 }
 
-// スクリプト実行
-if (require.main === module) {
+// スクリプト実行（ESモジュール対応）
+if (import.meta.url === `file://${process.argv[1]}`) {
   main().catch(console.error);
 }
 

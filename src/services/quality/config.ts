@@ -42,3 +42,33 @@ export const CURRENT_QUALITY_CONFIG: QualitySystemConfig = {
     enablePerformanceLogging: true,
   }
 };
+
+// Legacy export for backward compatibility
+export const DEFAULT_QUALITY_CONFIG = CURRENT_QUALITY_CONFIG;
+
+// Fast mode configuration for performance testing
+export const FAST_MODE_CONFIG: QualitySystemConfig = {
+  ...CURRENT_QUALITY_CONFIG,
+  parallelProcessing: {
+    enabled: true,
+    timeoutMs: 2000, // 2 seconds timeout for fast mode
+  },
+  cache: {
+    enabled: true,
+    maxSize: 50, // Smaller cache for fast mode
+    ttlMs: 1800000, // 30 minutes cache TTL
+  }
+};
+
+// Precision mode configuration for accuracy testing
+export const PRECISION_MODE_CONFIG: QualitySystemConfig = {
+  ...CURRENT_QUALITY_CONFIG,
+  parallelProcessing: {
+    enabled: false, // Disable parallel processing for precision
+    timeoutMs: 10000, // 10 seconds timeout for precision mode
+  },
+  logging: {
+    enableDetailedLogging: true,
+    enablePerformanceLogging: true,
+  }
+};
